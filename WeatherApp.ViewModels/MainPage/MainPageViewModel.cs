@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI;
@@ -12,7 +14,9 @@ namespace WeatherApp.ViewModels.MainPage
         private readonly IApiRequestExecutor _apiRequestExecutor;
         private string _сity;
         private string _inputText;
-
+        private string _precipitation;
+        private Brush _precipitationBrush;
+        private WeatherResponse _item = new WeatherResponse();
         public MainPageViewModel(IApiRequestExecutor apiRequestExecutor)
         {
             _apiRequestExecutor = apiRequestExecutor;
@@ -48,14 +52,41 @@ namespace WeatherApp.ViewModels.MainPage
             }
         }
 
-        public WeatherResponse Item { get; private set; }
-        public string Precipitation { get; set; }
+        public WeatherResponse Item
+        {
+            get => _item;
+            set
+            {
+                if (!_item.Equals(value))
+                {
+                    _item = value;
+                    OnPropertyChanged(nameof(Item));
+                }
+            }
+        }
+
+        public string Precipitation
+        {
+            get => _precipitation;
+            set
+            {
+                if (_precipitation != value)
+                {
+                    if (Item.DailyForecasts[0].Day.HasPrecipitation || Item.DailyForecasts[0].Night.HasPrecipitation)
+                    {
+                        _precipitation = "Rain!";
+                        PrecipitationColor = new SolidColorBrush(Colors.Red);
+                        OnPropertyChanged(nameof(Precipitation));
+                        OnPropertyChanged(nameof(PrecipitationColor));
+                    }
+                }
+            }
+        }
         public Brush PrecipitationColor { get; set; }
 
-        public async Task LoadDataAsync()
+        public async Task LoadDataAsync(string key)
         {
-            Item = await _apiRequestExecutor.GetAsync<WeatherResponse>(
-                "/forecasts/v1/daily/1day/323030?apikey=mw67UsQIG9Ifq6qiVGl15dqiyzRGhxbR&metric=true");
+            Item = await _apiRequestExecutor.GetForecastAsync<WeatherResponse>(key);
             if (Item.DailyForecasts[0].Day.HasPrecipitation || Item.DailyForecasts[0].Night.HasPrecipitation)
             {
                 Precipitation = "Rain!";
@@ -71,12 +102,14 @@ namespace WeatherApp.ViewModels.MainPage
 
         private async void OnSubmit(object parameter)
         {
+            var list = await _apiRequestExecutor.GetLocationAsync<IEnumerable<LocationResponse>>(InputText);
             City = InputText;
             InputText = string.Empty;
+            await LoadDataAsync(list.FirstOrDefault().Key);
         }
         private bool CanSubmit(object parameter)
         {
-            return !string.IsNullOrEmpty(InputText); // Команда активна, если есть текст
+            return !string.IsNullOrEmpty(InputText);
         }
         public event PropertyChangedEventHandler PropertyChanged;
 

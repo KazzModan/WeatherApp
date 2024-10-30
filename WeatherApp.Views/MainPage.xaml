@@ -60,7 +60,7 @@
             Grid.Row="3" 
             Grid.Column="0"
             Margin="0,10,0,0" >
-            <Run Text="MTemp: "></Run>
+            <Run Text="MinTemp: "></Run>
             <Run Text="{Binding Item.DailyForecasts[0].Temperature.Minimum.Value }"></Run>
             <Run Text="°C"></Run>
         </TextBlock>

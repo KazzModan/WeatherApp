@@ -27,7 +27,7 @@ namespace WeatherApp.Bootstrapper
         {
             var mainPageViewModel = _container.Resolve<IMainPageViewModel>();
 
-            await mainPageViewModel.LoadDataAsync();
+            //await mainPageViewModel.LoadDataAsync();
 
             var mainPage = new MainPage(mainPageViewModel);
 

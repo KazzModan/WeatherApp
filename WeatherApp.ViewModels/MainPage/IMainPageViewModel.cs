@@ -4,6 +4,6 @@ namespace WeatherApp.ViewModels.MainPage
 {
     public interface IMainPageViewModel
     {
-        Task LoadDataAsync();
+        Task LoadDataAsync(string key);
     }
 }
