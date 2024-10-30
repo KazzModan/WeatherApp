@@ -14,41 +14,24 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using WeatherApp.Views;
+using Windows.UI.ViewManagement;
 
 namespace WeatherApp
 {
     sealed partial class App : Application
     {
+        private Bootstrapper.Bootstrapper _bootstrapper; 
         public App()
         {
             this.InitializeComponent();
+            _bootstrapper = new Bootstrapper.Bootstrapper();
         }
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
-            if (rootFrame == null)
-            {
-                rootFrame = new Frame();
-
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
-
-                Window.Current.Content = rootFrame;
-            }
-
-            //if (e.PrelaunchActivated == false)
-            //{
-            //    if (rootFrame.Content == null)
-            //    {
-            //        rootFrame.Navigate(typeof(MainPage), e.Arguments);
-            //    }
-            //    // Ensure the current window is active
-            //    Window.Current.Activate();
-            //}
+            var mainPage = await _bootstrapper.Run();
+            Window.Current.Content = new Frame { Content = mainPage, DataContext = mainPage.DataContext};
+            Window.Current.Activate();
         } 
     }
 }

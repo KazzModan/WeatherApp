@@ -1,4 +1,5 @@
 ﻿using WeatherApp.ViewModels.MainPage;
+using Windows.UI.ViewManagement;
 
 namespace WeatherApp.Views
 {

@@ -127,6 +127,13 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +154,10 @@
     <ProjectReference Include="..\WeatherApp.Bootstrapper\WeatherApp.Bootstrapper.csproj">
       <Project>{c3746996-457c-4239-b13c-8163693b83a6}</Project>
       <Name>WeatherApp.Bootstrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeatherApp.Views\WeatherApp.Views.csproj">
+      <Project>{E9CF55C7-590D-4B84-9D41-1E1C29709FD1}</Project>
+      <Name>WeatherApp.Views</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

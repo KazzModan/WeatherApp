@@ -124,6 +124,7 @@
     <Compile Include="MainPage\MainPageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationModule.cs" />
+    <Compile Include="RelayCommand.cs" />
     <EmbeddedResource Include="Properties\WeatherApp.ViewModels.rd.xml" />
   </ItemGroup>
   <ItemGroup>
