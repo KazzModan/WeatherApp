@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Media;
 using WeatherApp.Domain.Common;
 using WeatherApp.Domain.REST;
+using Windows.UI.Xaml.Controls;
 
 namespace WeatherApp.ViewModels.MainPage
 {
@@ -19,6 +21,7 @@ namespace WeatherApp.ViewModels.MainPage
         private string _inputText;
         private WeatherResponse _item = new WeatherResponse();
         private string _precipitation;
+        private readonly HashSet<string> _shownCities = new HashSet<string>();
 
         public MainPageViewModel(IApiRequestExecutor apiRequestExecutor, IPathService pathService)
         {
@@ -145,13 +148,27 @@ namespace WeatherApp.ViewModels.MainPage
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void UpdatePrecipitation()
+        private async void UpdatePrecipitation()
         {
             if (Item.DailyForecasts.FirstOrDefault()?.Day.HasPrecipitation == true ||
                 Item.DailyForecasts.FirstOrDefault()?.Night.HasPrecipitation == true)
             {
                 Precipitation = "Rain!";
                 PrecipitationColor = new SolidColorBrush(Colors.Red);
+
+                if (!_shownCities.Contains(City))
+                {
+                    _shownCities.Add(City);
+
+                    var dialog = new ContentDialog
+                    {
+                        Title = "Rain forecast",
+                        Content = $"In the {City} will rain.",
+                        CloseButtonText = "OK"
+                    };
+
+                    await dialog.ShowAsync();
+                }
             }
             else
             {
@@ -162,7 +179,6 @@ namespace WeatherApp.ViewModels.MainPage
             OnPropertyChanged(nameof(Precipitation));
             OnPropertyChanged(nameof(PrecipitationColor));
         }
-
         public void Dispose()
         {
             if (City != "Wrong Input!") _pathService.SaveAsync(City);
