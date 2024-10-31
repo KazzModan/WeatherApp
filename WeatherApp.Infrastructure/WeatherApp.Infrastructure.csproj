@@ -120,6 +120,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common\PathService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistrationModule.cs" />
     <Compile Include="REST\ApiRequestExecutor.cs" />

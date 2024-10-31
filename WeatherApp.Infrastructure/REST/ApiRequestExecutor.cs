@@ -10,7 +10,7 @@ namespace WeatherApp.Infrastructure.REST
     public class ApiRequestExecutor : IApiRequestExecutor
     {
         private readonly Uri  _baseAddress = new Uri("http://dataservice.accuweather.com");
-        private readonly string apiKey = "euUlS7UghJc2DqjcwxlbO6AlPjLAsK8g";
+        private readonly string apiKey = "OS5ZwDKBjXGs9qD0RA8KrYdH4X0pIXAP";
 
         public async Task<TResponse> GetForecastAsync<TResponse>(string cityKey)
         {

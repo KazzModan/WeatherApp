@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace WeatherApp.ViewModels.MainPage
 {
-    public interface IMainPageViewModel
+    public interface IMainPageViewModel : IDisposable
     {
-        Task LoadDataAsync(string key);
+        Task InitializeAsync();
     }
 }

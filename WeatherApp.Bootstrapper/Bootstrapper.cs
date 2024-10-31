@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Autofac;
 using WeatherApp.Infrastructure;
 using WeatherApp.ViewModels.MainPage;
@@ -9,9 +7,10 @@ using WeatherApp.Views;
 
 namespace WeatherApp.Bootstrapper
 {
-    public class Bootstrapper
+    public class Bootstrapper : IDisposable
     {
         private readonly IContainer _container;
+        private IMainPageViewModel _mainPageViewModel;
 
         public Bootstrapper()
         {
@@ -21,20 +20,25 @@ namespace WeatherApp.Bootstrapper
                 .RegisterModule<RegistrationModule>();
 
             _container = containerBuilder.Build();
+            _container.Resolve<IMainPageViewModel>();
         }
 
         public async Task<MainPage> Run()
         {
-            var mainPageViewModel = _container.Resolve<IMainPageViewModel>();
+            _mainPageViewModel = _container.Resolve<IMainPageViewModel>();
 
-            //await mainPageViewModel.LoadDataAsync();
-
-            var mainPage = new MainPage(mainPageViewModel);
+            await _mainPageViewModel.InitializeAsync();
+            var mainPage = new MainPage(_mainPageViewModel);
 
             if (mainPage == null)
                 throw new NotImplementedException();
 
             return mainPage;
+        }
+
+        public void Dispose()
+        {
+            _container?.Dispose();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using WeatherApp.Domain.Common;
 using WeatherApp.Domain.REST;
 
 namespace WeatherApp.ViewModels.MainPage
@@ -12,14 +13,16 @@ namespace WeatherApp.ViewModels.MainPage
     public class MainPageViewModel : IMainPageViewModel, INotifyPropertyChanged
     {
         private readonly IApiRequestExecutor _apiRequestExecutor;
-        private string _сity;
+        private readonly IPathService _pathService;
+        private string _city;
         private string _inputText;
-        private string _precipitation;
-        private Brush _precipitationBrush;
         private WeatherResponse _item = new WeatherResponse();
-        public MainPageViewModel(IApiRequestExecutor apiRequestExecutor)
+        private string _precipitation;
+
+        public MainPageViewModel(IApiRequestExecutor apiRequestExecutor, IPathService pathService)
         {
             _apiRequestExecutor = apiRequestExecutor;
+            _pathService = pathService;
             SubmitCommand = new RelayCommand(OnSubmit, CanSubmit);
         }
 
@@ -27,12 +30,12 @@ namespace WeatherApp.ViewModels.MainPage
 
         public string City
         {
-            get => _сity;
+            get => _city;
             set
             {
-                if (_сity != value)
+                if (_city != value)
                 {
-                    _сity = value;
+                    _city = value;
                     OnPropertyChanged(nameof(City));
                 }
             }
@@ -61,6 +64,7 @@ namespace WeatherApp.ViewModels.MainPage
                 {
                     _item = value;
                     OnPropertyChanged(nameof(Item));
+                    UpdatePrecipitation();
                 }
             }
         }
@@ -68,35 +72,31 @@ namespace WeatherApp.ViewModels.MainPage
         public string Precipitation
         {
             get => _precipitation;
-            set
+            private set
             {
                 if (_precipitation != value)
                 {
-                    if (Item.DailyForecasts[0].Day.HasPrecipitation || Item.DailyForecasts[0].Night.HasPrecipitation)
-                    {
-                        _precipitation = "Rain!";
-                        PrecipitationColor = new SolidColorBrush(Colors.Red);
-                        OnPropertyChanged(nameof(Precipitation));
-                        OnPropertyChanged(nameof(PrecipitationColor));
-                    }
+                    _precipitation = value;
+                    OnPropertyChanged(nameof(Precipitation));
                 }
             }
         }
+
         public Brush PrecipitationColor { get; set; }
 
-        public async Task LoadDataAsync(string key)
+        public async Task InitializeAsync()
         {
-            Item = await _apiRequestExecutor.GetForecastAsync<WeatherResponse>(key);
-            if (Item.DailyForecasts[0].Day.HasPrecipitation || Item.DailyForecasts[0].Night.HasPrecipitation)
-            {
-                Precipitation = "Rain!";
-                PrecipitationColor = new SolidColorBrush(Colors.Red);
-            }
-            else
-            {
-                Precipitation = "Clear";
-                PrecipitationColor = new SolidColorBrush(Colors.LimeGreen);
-            }
+            City = await _pathService.InitializeAsync();
+            if (City != "")
+                await LoadDataAsync(City);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public async Task LoadDataAsync(string cityName)
+        {
+            var list = await _apiRequestExecutor.GetLocationAsync<IEnumerable<LocationResponse>>(cityName);
+            Item = await _apiRequestExecutor.GetForecastAsync<WeatherResponse>(list.FirstOrDefault().Key);
         }
 
 
@@ -105,17 +105,40 @@ namespace WeatherApp.ViewModels.MainPage
             var list = await _apiRequestExecutor.GetLocationAsync<IEnumerable<LocationResponse>>(InputText);
             City = InputText;
             InputText = string.Empty;
-            await LoadDataAsync(list.FirstOrDefault().Key);
+            Item = await _apiRequestExecutor.GetForecastAsync<WeatherResponse>(list.FirstOrDefault().Key);
         }
+
         private bool CanSubmit(object parameter)
         {
             return !string.IsNullOrEmpty(InputText);
         }
-        public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void UpdatePrecipitation()
+        {
+            if (Item.DailyForecasts.FirstOrDefault()?.Day.HasPrecipitation == true ||
+                Item.DailyForecasts.FirstOrDefault()?.Night.HasPrecipitation == true)
+            {
+                Precipitation = "Rain!";
+                PrecipitationColor = new SolidColorBrush(Colors.Red);
+            }
+            else
+            {
+                Precipitation = "Clear!";
+                PrecipitationColor = new SolidColorBrush(Colors.LimeGreen);
+            }
+
+            OnPropertyChanged(nameof(Precipitation));
+            OnPropertyChanged(nameof(PrecipitationColor));
+        }
+
+        public async void Dispose()
+        {
+            await _pathService.SaveAsync(City);
         }
     }
 }

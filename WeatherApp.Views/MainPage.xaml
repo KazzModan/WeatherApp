@@ -30,7 +30,7 @@
            />
         <Button
             Grid.Column="1"
-            Command="{Binding SubmitCommand }">123</Button>
+            Command="{Binding SubmitCommand }">Search</Button>
 
         <TextBlock 
             FontSize="24"
