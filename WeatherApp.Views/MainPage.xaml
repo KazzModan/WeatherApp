@@ -9,71 +9,73 @@
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBox 
-            x:Name="CityTextBox" 
+        <TextBox
+            x:Name="CityTextBox"
             PlaceholderText="Enter City"
             Width="200"
-            HorizontalAlignment="Center" 
-            Grid.Row="0" 
-            Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-           />
+            HorizontalAlignment="Center"
+            Grid.Row="0"
+            Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Button
             Grid.Column="1"
-            Command="{Binding SubmitCommand }">Search</Button>
+            Command="{Binding SubmitCommand }">
+            Search
+        </Button>
 
-        <TextBlock 
+        <TextBlock
             FontSize="24"
-                   HorizontalAlignment="Left" 
-                   Grid.Row="1" 
-                   Grid.Column="0"
-                   Margin="0,10,0,0" >
-            <Run Text="City: "></Run>
-            <Run Text="{Binding City}"></Run>
-
-        </TextBlock>
-
-        <TextBlock 
-            FontSize="24"
-            HorizontalAlignment="Left" 
-            Grid.Row="2" 
+            HorizontalAlignment="Left"
+            Grid.Row="1"
             Grid.Column="0"
-            Margin="0,10,0,0" >
-            <Run Text="MaxTemp: "></Run>
-            <Run Text="{Binding Item.DailyForecasts[0].Temperature.Maximum.Value }"></Run>
-            <Run Text="°C"></Run>
+            Margin="0,10,0,0">
+            <Run Text="City: " />
+            <Run Text="{Binding City}"
+                 Foreground="{Binding CityColor}" />
+
         </TextBlock>
 
-        <TextBlock 
+        <TextBlock
             FontSize="24"
-            HorizontalAlignment="Left" 
-            Grid.Row="3" 
+            HorizontalAlignment="Left"
+            Grid.Row="2"
             Grid.Column="0"
-            Margin="0,10,0,0" >
-            <Run Text="MinTemp: "></Run>
-            <Run Text="{Binding Item.DailyForecasts[0].Temperature.Minimum.Value }"></Run>
-            <Run Text="°C"></Run>
+            Margin="0,10,0,0">
+            <Run Text="MaxTemp: " />
+            <Run Text="{Binding Item.DailyForecasts[0].Temperature.Maximum.Value }" />
+            <Run Text="°C" />
         </TextBlock>
 
-        <TextBlock 
+        <TextBlock
             FontSize="24"
-            HorizontalAlignment="Left" 
-            Grid.Row="2" 
+            HorizontalAlignment="Left"
+            Grid.Row="3"
+            Grid.Column="0"
+            Margin="0,10,0,0">
+            <Run Text="MinTemp: " />
+            <Run Text="{Binding Item.DailyForecasts[0].Temperature.Minimum.Value }" />
+            <Run Text="°C" />
+        </TextBlock>
+
+        <TextBlock
+            FontSize="24"
+            HorizontalAlignment="Left"
+            Grid.Row="2"
             Grid.Column="1"
             Margin="0,10,0,0">
-            <Run Text="Precipitation: "></Run>
+            <Run Text="Precipitation: " />
             <Run Text="{Binding Precipitation }"
-                 Foreground="{Binding PrecipitationColor}"></Run>
+                 Foreground="{Binding PrecipitationColor}" />
         </TextBlock>
     </Grid>
 </Page>

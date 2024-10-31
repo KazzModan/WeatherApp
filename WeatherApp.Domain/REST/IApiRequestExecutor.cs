@@ -6,6 +6,5 @@ namespace WeatherApp.Domain.REST
     {
         Task<TResponse> GetForecastAsync<TResponse>(string cityKey);
         Task<TResponse> GetLocationAsync<TResponse>(string request);
-
     }
 }

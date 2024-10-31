@@ -15,6 +15,7 @@ namespace WeatherApp.ViewModels.MainPage
         private readonly IApiRequestExecutor _apiRequestExecutor;
         private readonly IPathService _pathService;
         private string _city;
+        private Brush _cityColor;
         private string _inputText;
         private WeatherResponse _item = new WeatherResponse();
         private string _precipitation;
@@ -60,11 +61,12 @@ namespace WeatherApp.ViewModels.MainPage
             get => _item;
             set
             {
-                if (!_item.Equals(value))
+                if (!_item.Equals(value) || _item == null)
                 {
                     _item = value;
                     OnPropertyChanged(nameof(Item));
-                    UpdatePrecipitation();
+                    if (value != null)
+                        UpdatePrecipitation();
                 }
             }
         }
@@ -78,6 +80,19 @@ namespace WeatherApp.ViewModels.MainPage
                 {
                     _precipitation = value;
                     OnPropertyChanged(nameof(Precipitation));
+                }
+            }
+        }
+
+        public Brush CityColor
+        {
+            get => _cityColor;
+            private set
+            {
+                if (_cityColor != value)
+                {
+                    _cityColor = value;
+                    OnPropertyChanged(nameof(CityColor));
                 }
             }
         }
@@ -103,9 +118,21 @@ namespace WeatherApp.ViewModels.MainPage
         private async void OnSubmit(object parameter)
         {
             var list = await _apiRequestExecutor.GetLocationAsync<IEnumerable<LocationResponse>>(InputText);
-            City = InputText;
-            InputText = string.Empty;
-            Item = await _apiRequestExecutor.GetForecastAsync<WeatherResponse>(list.FirstOrDefault().Key);
+            if (list != null)
+            {
+                City = InputText;
+                InputText = string.Empty;
+                Item = await _apiRequestExecutor.GetForecastAsync<WeatherResponse>(list.FirstOrDefault().Key);
+                CityColor = new SolidColorBrush(Colors.Black);
+            }
+            else
+            {
+                City = "Wrong Input!";
+                CityColor = new SolidColorBrush(Colors.Red);
+                InputText = string.Empty;
+                Item = new WeatherResponse();
+                Precipitation = "";
+            }
         }
 
         private bool CanSubmit(object parameter)
@@ -136,9 +163,9 @@ namespace WeatherApp.ViewModels.MainPage
             OnPropertyChanged(nameof(PrecipitationColor));
         }
 
-        public async void Dispose()
+        public void Dispose()
         {
-            await _pathService.SaveAsync(City);
+            if (City != "Wrong Input!") _pathService.SaveAsync(City);
         }
     }
 }

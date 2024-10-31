@@ -27,6 +27,7 @@ namespace WeatherApp.Infrastructure.Common
                 return "";
 
             var serializedSettings = await FileIO.ReadTextAsync(settingsFile);
+
             return serializedSettings;
         }
 

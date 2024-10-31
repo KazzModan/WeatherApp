@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
-using System;
 
 namespace WeatherApp.Domain.REST
 {
     public class WeatherResponse
     {
+        public WeatherResponse()
+        {
+            DailyForecasts = new List<DailyForecast>();
+        }
+
         public List<DailyForecast> DailyForecasts { get; set; }
     }
 
