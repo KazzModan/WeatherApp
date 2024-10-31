@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using WeatherApp.Domain.Common;
 using WeatherApp.Domain.REST;
-using Windows.UI.Xaml.Controls;
 
 namespace WeatherApp.ViewModels.MainPage
 {
@@ -16,12 +16,12 @@ namespace WeatherApp.ViewModels.MainPage
     {
         private readonly IApiRequestExecutor _apiRequestExecutor;
         private readonly IPathService _pathService;
+        private readonly HashSet<string> _shownCities = new HashSet<string>();
         private string _city;
         private Brush _cityColor;
         private string _inputText;
         private WeatherResponse _item = new WeatherResponse();
         private string _precipitation;
-        private readonly HashSet<string> _shownCities = new HashSet<string>();
 
         public MainPageViewModel(IApiRequestExecutor apiRequestExecutor, IPathService pathService)
         {
@@ -179,6 +179,7 @@ namespace WeatherApp.ViewModels.MainPage
             OnPropertyChanged(nameof(Precipitation));
             OnPropertyChanged(nameof(PrecipitationColor));
         }
+
         public void Dispose()
         {
             if (City != "Wrong Input!") _pathService.SaveAsync(City);
